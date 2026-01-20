@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "Egyptian Bookends";
+  src: url("../fonts/lms-egyptian-bookends-font/LmsEgyptianBookends-lKw0.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Anubis";
+  src: url("../fonts/anubis-mythical-font/Anubismythicalserif-lxdLy.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hieroglyphics";
+  src: url("../fonts/ancient_egyptian_hieroglyphs/AncientEgyptianHieroglyphs.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Philosopher:wght@400;700&display=swap");

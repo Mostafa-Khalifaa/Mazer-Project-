@@ -1,0 +1,68 @@
+.screen.load-game {
+  background-image: url("../../assets/images/frames/Gemini_Generated_Image_guqqnxguqqnxguqq (1).png");
+  background-size: cover;
+  background-position: center;
+}
+.load-game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  gap: var(--spacing-lg);
+}
+.screen-title {
+  font-family: var(--font-title);
+  font-size: var(--fs-4xl);
+  font-weight: normal;
+  color: var(--gold);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  margin-bottom: var(--spacing-lg);
+}
+.save-table {
+  width: 100%;
+  max-width: 700px;
+  border-collapse: separate;
+  border-spacing: 0 var(--spacing-sm);
+}
+.save-table thead th {
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  color: var(--night);
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 2px solid var(--gold-dark);
+}
+.save-row {
+  background: linear-gradient(135deg, rgba(90, 74, 58, 0.9), rgba(45, 35, 23, 0.95));
+  transition: var(--transition-normal);
+  cursor: pointer;
+}
+.save-row:hover {
+  background: linear-gradient(135deg, rgba(110, 90, 70, 0.95), rgba(60, 45, 30, 0.98));
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+.save-row td, .save-row th {
+  padding: var(--spacing-md);
+  font-family: var(--font-body);
+  color: var(--sand);
+  border-top: 1px solid var(--gold-dark);
+  border-bottom: 1px solid var(--gold-dark);
+}
+.save-row td:first-child {
+  border-left: 2px solid var(--gold-dark);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+.save-row td:last-child {
+  border-right: 2px solid var(--gold-dark);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.slot-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold);
+}
+.slot-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
