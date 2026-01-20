@@ -8,6 +8,16 @@
     <title>Mazer</title>
   </head>
   <body>
+    <dialog id="pause-menu">
+      <h2>pause</h2>
+      <menu>
+        <div class="buttons">
+          <button onClick="onResume()" class="menu-btn">Resume</button>
+          <button onClick="onRestart()" class="menu-btn">Restart</button>
+          <button onClick="onQuit()" class="menu-btn">Quit</button>
+        </div>
+      </menu>
+    </dialog>
     <!-- Loading Screen -->
     <div class="loading-screen active">
       <div class="loading-content">
@@ -30,6 +40,7 @@
         </section>
       </section>
       <section class="screen game">
+        <!-- <button onClick="onPause()">Pause</button> -->
         <div class="game-arena">
           <div class="playground">
             <!-- HUD - positioned at top of frame -->
@@ -155,6 +166,6 @@
       <div class="right-gate"></div>
     </div>
     <script src="navigation.js"></script>
-    <script src="gate.js"></script>
+    <script src="./core/Game.js"></script>
   </body>
 </html>
