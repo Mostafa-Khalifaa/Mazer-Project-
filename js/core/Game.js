@@ -1,126 +1,208 @@
 import { StorageSystem } from '../storage/storage.js';
 import { mazes } from '../maze/MazeLevels.js';
-import { loadLevelMaze } from '../maze/Maze.js';
-import GameState from './GameState.js';
-import Timer from './Timer.js';
+import { loadLevelMaze, drawMaze, animateKeys } from '../maze/Maze.js';
+import { createPlayer } from '../player/PlayerController.js';
 import HUD from './HUD.js';
-import CollisionHandler from './CollisionHandler.js';
-import MoveValidator from './MoveValidator.js';
-import LevelManager from './LevelManager.js';
-import Player from '../player/Player.js';
+import Timer from './Timer.js';
 
 class Game {
   constructor() {
-    this.state = new GameState();
+    this.lvl = 1;
+    this.keys = 0;
+    this.running = false;
+    this.paused = false;
+    this.maze = null;
+    this.player = null;
     this.timer = new Timer();
-    this.state.player = new Player(0, 0, 3);
+    
+    this.canvas = document.getElementById('canvas');
+    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+    this.TILE_SIZE = 80; 
+    this.camera = { x: 0, y: 0 };
+    this.lastFrameTime = 0;
+    this.animationFrameId = null;
   }
 
-  startGame() {
-    this.state.reset();
-    this.startLevel(1);
+  start() {
+    this.lvl = 1;
+    this.keys = 0;
+    this.loadLvl(1);
   }
 
-  startLevel(level) {
-    this.state.currentLevel = level;
-    this.state.isGameRunning = true;
-    this.state.isPaused = false;
-    this.state.resetLevel();
-
-    this.state.currentMaze = mazes[level - 1];
-    loadLevelMaze(level);
-
-    HUD.updateAll(this.state);
-    this.timer.reset();
-    this.timer.start();
+  loadLvl(num) {
+    this.lvl = num;
+    this.running = true;
+    this.paused = false;
+    this.keys = 0;
+    
+    this.maze = mazes[num - 1];
+    
+    loadLevelMaze(num).then(() => {
+      const sprite = new Image();
+      sprite.onload = () => {
+        this.player = createPlayer({
+          startX: 0,
+          startY: 0,
+          lives: 3, 
+          maze: this.maze,
+          spriteImage: sprite
+        });
+        
+        this.startGameLoop();
+      };
+      sprite.src = 'assets/sprites/player/player.png';
+      
+      this.updateUI();
+      this.timer.reset();
+      this.timer.start();
+    })
   }
 
-  restartLevel() {
-    this.startLevel(this.state.currentLevel);
-  }
-
-  handlePlayerMove(direction) {
-    if (!this.state.isGameRunning || this.state.isPaused) {
-      return;
-    }
-
-    const currentPos = this.state.player.getPlayerPosition();
-    const newPos = MoveValidator.getNewPosition(currentPos, direction);
-
-    if (MoveValidator.canMove(this.state.currentMaze, newPos.x, newPos.y)) {
-      this.state.player.setPlayerPosition(newPos.x, newPos.y);
-
-      CollisionHandler.checkHeart(this.state.currentMaze, newPos.x, newPos.y, this.state);
-      CollisionHandler.checkKey(this.state.currentMaze, newPos.x, newPos.y, this.state);
-      const hitMonster = CollisionHandler.checkMonster(this.state.currentMaze, newPos.x, newPos.y, this.state);
-
-      HUD.updateAll(this.state);
-
-      if (hitMonster && this.state.playerHearts <= 0) {
-        this.endGame();
+  move(dir) {
+    if (!this.running || this.paused || !this.player) return;
+    
+    let dx = 0, dy = 0;
+    if (dir === 'left') dx = -1;
+    if (dir === 'right') dx = 1;
+    if (dir === 'up') dy = -1;
+    if (dir === 'down') dy = 1;
+    
+    if (this.player.movePlayer(dx, dy)) {
+      const newPos = this.player.getPlayerPosition();
+      
+      this.handleTile(newPos.x, newPos.y);
+      this.updateUI();
+      
+      if (!this.player.isPlayerAlive()) {
+        this.gameOver();
+      } else if (this.checkWin(newPos)) {
+        this.nextLvl();
       }
-
-      if (LevelManager.isLevelComplete(this.state.currentMaze, currentPos)) {
-        this.levelComplete();
-      }
     }
   }
 
-  levelComplete() {
+  handleTile(x, y) {
+    const tile = this.maze[y][x];
+    
+    if (tile === 4) {
+      this.player.loseLife();
+    } 
+    else if (tile === 2) {
+      this.player.gainLife();
+      this.maze[y][x] = 0; 
+    } 
+    else if (tile === 3) {
+      this.keys++;
+      this.maze[y][x] = 0; 
+    }
+  }
+
+  checkWin(pos) {
+    if (this.maze[pos.y][pos.x] !== 5) return false;
+    
+    for (let row of this.maze) {
+      for (let tile of row) {
+        if (tile === 3) return false; 
+      }
+    }
+    return true;
+  }
+
+  nextLvl() {
     this.timer.stop();
-
-    setTimeout(() => {
-      this.startLevel(this.state.currentLevel + 1);
-    }, 2000);
+    setTimeout(() => this.loadLvl(this.lvl + 1), 2000);
   }
 
-  endGame() {
-    this.state.isGameRunning = false;
+  gameOver() {
+    this.running = false;
     this.timer.stop();
-    LevelManager.showGameOver(this.state.currentLevel);
+    
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    
+    alert('Game Over! You reached Level ' + this.lvl);
   }
 
-  pauseGame() {
-    this.state.isPaused = true;
-    this.timer.pause();
+  togglePause(shouldPause) {
+    this.paused = shouldPause;
+    shouldPause ? this.timer.pause() : this.timer.resume();
   }
 
-  resumeGame() {
-    this.state.isPaused = false;
-    this.timer.resume();
+  updateUI() {
+    const hearts = this.player ? this.player.getLivesCount() : 3;
+    HUD.updateHearts(hearts);
+    HUD.updateKeys(this.keys);
+    HUD.updateLevel(this.lvl);
+    HUD.updateTimer(this.timer.seconds);
   }
 
-  saveGame(slotNumber) {
-    let playerPosition = this.state.player.getPlayerPosition();
+  startGameLoop() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    
+    this.lastFrameTime = performance.now();
+    this.gameLoop();
+  }
 
-    const gameData = {
-      level: this.state.currentLevel,
-      hearts: this.state.playerHearts,
-      keys: this.state.keysCollected,
+  gameLoop = (currentTime) => {
+    if (!this.running) return;
+    
+    const deltaTime = currentTime - this.lastFrameTime;
+    this.lastFrameTime = currentTime;
+    
+    if (this.ctx && this.canvas) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    
+    if (this.maze && this.ctx) {
+        drawMaze(this.maze);
+    }
+    
+    animateKeys(); 
+    if (!this.paused && this.player) {
+      this.player.update(deltaTime);
+      this.renderPlayer();
+    } else if (this.player) {
+        this.renderPlayer();
+    }
+    
+    this.animationFrameId = requestAnimationFrame(this.gameLoop);
+  }
+
+  renderPlayer() {
+    if (!this.player || !this.ctx) return;
+    
+    this.player.draw(this.ctx, this.TILE_SIZE, this.camera);
+  }
+
+  save(slot) {
+    const pos = this.player.getPlayerPosition();
+    StorageSystem.saveToSlot(slot, {
+      level: this.lvl,
+      hearts: this.hearts,
+      keys: this.keys,
       time: this.timer.seconds,
-      playerPosition: playerPosition
-    };
-
-    StorageSystem.saveToSlot(slotNumber, gameData);
+      playerPosition: pos
+    });
   }
 
-  loadGame(slotNumber) {
-    const saveData = StorageSystem.loadFromSlot(slotNumber);
-
-    if (!saveData) {
-      return false;
+  load(slot) {
+    const data = StorageSystem.loadFromSlot(slot);
+    if (!data) return false;
+    
+    this.lvl = data.level;
+    this.hearts = data.hearts;
+    this.keys = data.keys;
+    this.timer.seconds = data.time;
+    
+    this.loadLvl(this.lvl);
+    
+    if (data.playerPosition) {
+      this.player.setPlayerPosition(data.playerPosition.x, data.playerPosition.y);
     }
-
-    this.state.currentLevel = saveData.level;
-    this.state.playerHearts = saveData.hearts;
-    this.state.keysCollected = saveData.keys;
-    this.timer.seconds = saveData.time;
-
-    if (saveData.playerPosition) {
-      this.state.player.setPlayerPosition(saveData.playerPosition.x, saveData.playerPosition.y);
-    }
-
-    this.startLevel(this.state.currentLevel);
+    
     return true;
   }
 }
@@ -128,37 +210,47 @@ class Game {
 const game = new Game();
 window.game = game;
 
-function onPause() {
-  game.pauseGame();
+document.addEventListener('DOMContentLoaded', () => {
+  const btnNewGame = document.getElementById('btn-new-game');
+  if (btnNewGame) {
+    btnNewGame.addEventListener('click', () => {
+      game.start();
+    });
+  }
+});
+
+window.onPause = () => {
+  game.togglePause(true);
   document.getElementById('pause-menu').showModal();
-}
+};
 
-function onResume() {
-  game.resumeGame();
+window.onResume = () => {
+  game.togglePause(false);
   document.getElementById('pause-menu').close();
-}
+};
 
-function onRestart() {
-  game.restartLevel();
+window.onRestart = () => {
+  game.loadLvl(game.lvl);
   document.getElementById('pause-menu').close();
-}
+};
 
-function onQuit() {
+window.onQuit = () => {
   document.getElementById('pause-menu').close();
-  game.state.isGameRunning = false;
+  game.running = false;
   game.timer.stop();
-}
-
-window.onPause = onPause;
-window.onResume = onResume;
-window.onRestart = onRestart;
-window.onQuit = onQuit;
+};
 
 document.addEventListener('keydown', (e) => {
-  if (window.game && window.game.state.isGameRunning && !window.game.state.isPaused) {
-    if (e.key === 'ArrowUp') window.game.handlePlayerMove('up');
-    else if (e.key === 'ArrowDown') window.game.handlePlayerMove('down');
-    else if (e.key === 'ArrowLeft') window.game.handlePlayerMove('left');
-    else if (e.key === 'ArrowRight') window.game.handlePlayerMove('right');
+  if (!game.running || game.paused) return;
+  
+  const keys = {
+    'ArrowUp': 'up',
+    'ArrowDown': 'down', 
+    'ArrowLeft': 'left',
+    'ArrowRight': 'right'
+  };
+  
+  if (keys[e.key]) {
+    game.move(keys[e.key]);
   }
 });

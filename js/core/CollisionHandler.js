@@ -1,34 +1,30 @@
-// CollisionHandler.js
 
 class CollisionHandler {
+  
+  static getTileType(maze, x, y) {
+    if (!maze || !maze[y] || !maze[y][x]) return null;
+    return maze[y][x];
+  }
 
-    static checkMonster(maze, x, y, state) {
-        if (maze && maze[y] && maze[y][x] === 4) {
-            state.playerHearts--;
-            return true;
-        }
-        return false;
-    }
+  static isWall(maze, x, y) {
+    return this.getTileType(maze, x, y) === 1;
+  }
 
-    static checkHeart(maze, x, y, state) {
-        if (maze && maze[y] && maze[y][x] === 2) {
-            if (state.playerHearts < 3) {
-                state.playerHearts++;
-            }
-            maze[y][x] = 0;
-            return true;
-        }
-        return false;
-    }
+  static isMonster(maze, x, y) {
+    return this.getTileType(maze, x, y) === 4;
+  }
 
-    static checkKey(maze, x, y, state) {
-        if (maze && maze[y] && maze[y][x] === 3) {
-            state.keysCollected++;
-            maze[y][x] = 0;
-            return true;
-        }
-        return false;
-    }
+  static isHeart(maze, x, y) {
+    return this.getTileType(maze, x, y) === 2;
+  }
+
+  static isKey(maze, x, y) {
+    return this.getTileType(maze, x, y) === 3;
+  }
+
+  static isExit(maze, x, y) {
+    return this.getTileType(maze, x, y) === 5;
+  }
 }
 
 export default CollisionHandler;

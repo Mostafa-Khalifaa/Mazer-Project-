@@ -43,7 +43,7 @@ function animateKeys() {
         // Draw animated gem
         ctx.drawImage(gem, frameX, 0, GemspriteWidth, GemspriteHeight, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     });
-    requestAnimationFrame(animateKeys);
+    // requestAnimationFrame(animateKeys); // Managed by Game.js loop
 }
 
 
@@ -51,10 +51,9 @@ function animateKeys() {
 // canvas width 1180 height 500
 function loadLevelMaze(level) {
     let maze = mazesArr[level - 1];
-    loadAllImages().then(() => {
+    return loadAllImages().then(() => {
         console.log("All images loaded!");
-        drawMaze(maze);
-        animateKeys();
+        // Rendering moved to Game.js loop
     });
 }
 
@@ -145,4 +144,4 @@ function removeLifeFromMaze(row, col) {
 //loadLevelMaze(1);
 // Auto-load removed - Game.js calls when ready
 
-export { loadLevelMaze };
+export { loadLevelMaze, drawMaze, animateKeys };

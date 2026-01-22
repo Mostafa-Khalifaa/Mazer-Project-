@@ -1,43 +1,46 @@
 // Timer.js
 
+import HUD from './HUD.js';
+
 class Timer {
-    constructor() {
-        this.seconds = 0;
-        this.intervalId = null;
-        this.isPaused = false;
+  constructor() {
+    this.seconds = 0;
+    this.intervalId = null;
+    this.isPaused = false;
+  }
+
+  start() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
     }
 
-    start() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-        }
+    this.intervalId = setInterval(() => {
+      if (!this.isPaused) {
+        this.seconds++;
+        HUD.updateTimer(this.seconds);
+      }
+    }, 1000);
+  }
 
-        this.intervalId = setInterval(() => {
-            if (!this.isPaused) {
-                this.seconds++;
-            }
-        }, 1000);
+  stop() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
     }
+  }
 
-    stop() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
-        }
-    }
+  reset() {
+    this.seconds = 0;
+    this.stop();
+  }
 
-    reset() {
-        this.seconds = 0;
-        this.stop();
-    }
+  pause() {
+    this.isPaused = true;
+  }
 
-    pause() {
-        this.isPaused = true;
-    }
-
-    resume() {
-        this.isPaused = false;
-    }
+  resume() {
+    this.isPaused = false;
+  }
 }
 
 export default Timer;
