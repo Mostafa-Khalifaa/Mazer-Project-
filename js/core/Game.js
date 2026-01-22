@@ -139,7 +139,7 @@ class Game {
     HUD.updateHearts(hearts);
     HUD.updateKeys(this.keys);
     HUD.updateLevel(this.lvl);
-    HUD.updateTimer(this.timer.seconds);
+    HUD.updateTimer(this.timer.timeLeft);
   }
 
   startGameLoop() {
