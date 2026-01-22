@@ -12,7 +12,7 @@ class HUD {
     static updateKeys(keys) {
         const element = document.querySelector('.key-hud .hud-content');
         if (element) {
-            element.textContent = `🔑 ${keys}/5`;
+            element.textContent = `🔑 ${keys}/3`;
         }
     }
 
