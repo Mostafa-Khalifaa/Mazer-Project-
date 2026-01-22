@@ -1,3 +1,12 @@
+import { StorageSystem } from './storage/storage.js';
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelector('.loading-screen').classList.remove('active');
+    document.querySelector('.screen.home').classList.add('active');
+  }, 3000);
+});
+
 document.body.addEventListener('click', () => {
   if (bgMusic.paused && document.getElementById('toggle-music').checked) {
     bgMusic.play();
@@ -13,14 +22,14 @@ document.querySelectorAll('.menu-btn').forEach(btn => {
 });
 document.getElementById('btn-new-game').addEventListener('click', () => {
   document.querySelector('.gate-modal').classList.add('closing');
-  
+
   setTimeout(() => {
     showScreen('game');
     document.querySelector('.gate-modal').classList.remove('closing');
-  }, 3600); 
+  }, 3600);
   setTimeout(() => {
     document.querySelector('.gate-modal').classList.add('opening');
-  }, 1800); 
+  }, 1800);
 });
 document.getElementById('btn-load-game').addEventListener('click', () => showScreen('load-game'));
 document.getElementById('btn-settings').addEventListener('click', () => showScreen('settings'));
