@@ -23,27 +23,23 @@ let keyPositions = [];
 let gemPositions = [];
 let trapPositions = [];
 
-function animateKeys() {
+let currentCamera = { x: 0, y: 0 };
+
+function animateKeys(camera = { x: 0, y: 0 }) {
+    currentCamera = camera;
     gameFrame++;
     let position = Math.floor(gameFrame / staggerFrames) % 4;
     keyPositions.forEach(({ x, y }) => {
-        ctx.drawImage(path, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        // Draw the animated key frame
+        ctx.drawImage(path, x * TILE_SIZE - camera.x, y * TILE_SIZE - camera.y, TILE_SIZE, TILE_SIZE);
         frameX = KeyspriteWidth * position;
-        ctx.drawImage(key, frameX, 0, KeyspriteWidth, KeyspriteHeight, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE + 10, TILE_SIZE + 20);
+        ctx.drawImage(key, frameX, 0, KeyspriteWidth, KeyspriteHeight, x * TILE_SIZE - camera.x, y * TILE_SIZE - camera.y, TILE_SIZE + 10, TILE_SIZE + 20);
     });
 
     gemPositions.forEach(({ x, y }) => {
-        ctx.drawImage(path, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-        // Calculate frame position
-        //let position = Math.floor(gameFrame / staggerFrames) % 4;
+        ctx.drawImage(path, x * TILE_SIZE - camera.x, y * TILE_SIZE - camera.y, TILE_SIZE, TILE_SIZE);
         frameX = GemspriteWidth * position;
-
-        // Draw animated gem
-        ctx.drawImage(gem, frameX, 0, GemspriteWidth, GemspriteHeight, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        ctx.drawImage(gem, frameX, 0, GemspriteWidth, GemspriteHeight, x * TILE_SIZE - camera.x, y * TILE_SIZE - camera.y, TILE_SIZE, TILE_SIZE);
     });
-    // requestAnimationFrame(animateKeys); // Managed by Game.js loop
 }
 
 
@@ -57,7 +53,8 @@ function loadLevelMaze(level) {
     });
 }
 
-function drawMaze(maze) {
+function drawMaze(maze, camera = { x: 0, y: 0 }) {
+    currentCamera = camera;
     console.log(maze.length, maze[0].length);
     keyPositions = [];
     gemPositions = [];
@@ -84,15 +81,14 @@ function drawMaze(maze) {
 
 
 function drawPath(x, y) {
-    //console.log(path.width , path.height)
-    ctx.drawImage(path, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    ctx.drawImage(path, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
 }
 function drawWall(x, y) {
-    ctx.drawImage(wall, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    ctx.drawImage(wall, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
 }
 
 function drawDoor(x, y) {
-    ctx.drawImage(door, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    ctx.drawImage(door, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
 }
 
 function isWall(row, col, level) {

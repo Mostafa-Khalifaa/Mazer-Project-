@@ -4,6 +4,7 @@ import { loadLevelMaze, drawMaze, animateKeys } from '../maze/Maze.js';
 import { createPlayer } from '../player/PlayerController.js';
 import HUD from './HUD.js';
 import Timer from './Timer.js';
+import Camera from './Camera.js';
 
 class Game {
   constructor() {
@@ -17,8 +18,14 @@ class Game {
     
     this.canvas = document.getElementById('canvas');
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-    this.TILE_SIZE = 80; 
-    this.camera = { x: 0, y: 0 };
+    this.TILE_SIZE = 80;
+    
+    this.camera = new Camera(
+      this.canvas ? this.canvas.width : 800,
+      this.canvas ? this.canvas.height : 600,
+      this.TILE_SIZE
+    );
+    
     this.lastFrameTime = 0;
     this.animationFrameId = null;
   }
@@ -152,15 +159,21 @@ class Game {
     const deltaTime = currentTime - this.lastFrameTime;
     this.lastFrameTime = currentTime;
     
+    if (this.player) {
+      const pos = this.player.getVisualPosition();
+      this.camera.follow(pos.x, pos.y);
+      this.camera.clamp(this.maze[0].length, this.maze.length);
+    }
+    
     if (this.ctx && this.canvas) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
     
     if (this.maze && this.ctx) {
-        drawMaze(this.maze);
+        drawMaze(this.maze, this.camera);
     }
     
-    animateKeys(); 
+    animateKeys(this.camera); 
     if (!this.paused && this.player) {
       this.player.update(deltaTime);
       this.renderPlayer();
