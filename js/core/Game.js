@@ -1,6 +1,6 @@
 import { StorageSystem } from '../storage/storage.js';
 import { mazes } from '../maze/MazeLevels.js';
-import { loadLevelMaze, drawMaze, animateKeys } from '../maze/Maze.js';
+import { loadLevelMaze, drawMaze, animateKeys} from '../maze/Maze.js';
 import { createPlayer } from '../player/PlayerController.js';
 import HUD from './HUD.js';
 import Timer from './Timer.js';
@@ -111,11 +111,15 @@ class Game {
       this.keys++;
       this.maze[y][x] = 0; 
     }
-  }
-
+    //console.log(this.keys)
+    //console.log(this.maze[this.maze.length - 1].length-1 , this.maze.length - 1)
+    if(this.keys === 3){
+      this.maze[this.maze.length - 1][this.maze[this.maze.length - 1].length - 1] = 6;
+    }
+  } 
+  
   checkWin(pos) {
-    if (this.maze[pos.y][pos.x] !== 5) return false;
-    
+    if (this.maze[pos.y][pos.x] !== 5 && this.maze[pos.y][pos.x] !== 6) return false;
     for (let row of this.maze) {
       for (let tile of row) {
         if (tile === 3) return false; 
