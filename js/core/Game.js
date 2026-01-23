@@ -2,6 +2,7 @@ import { StorageSystem } from '../storage/storage.js';
 import { mazes } from '../maze/MazeLevels.js';
 import { loadLevelMaze, drawMaze, animateKeys} from '../maze/Maze.js';
 import { createPlayer } from '../player/PlayerController.js';
+import { createEnemy } from '../enemies/EnemyController.js';
 import HUD from './HUD.js';
 import Timer from './Timer.js';
 import Camera from './Camera.js';
@@ -15,6 +16,7 @@ class Game {
     this.paused = false;
     this.maze = null;
     this.player = null;
+    // this.enemies = []; 
     this.timer = new Timer();
     
     this.canvas = document.getElementById('canvas');
@@ -42,11 +44,12 @@ class Game {
     this.running = true;
     this.paused = false;
     this.keys = 0;
-    
+   // this.enemies = [];
     this.maze = mazes[num - 1];
     
     loadLevelMaze(num).then(() => {
       const sprite = new Image();
+     // const enemySprite = new Image();
       sprite.onload = () => {
         let startX = 0;
         let startY = 0;
@@ -77,7 +80,7 @@ class Game {
         this.startGameLoop();
       };
       sprite.src = 'assets/sprites/player/player.png';
-      
+    //  enemySprite.src = 'assets/images/game play /characters/enimies/mummy-02.png';
       this.updateUI();
       
       let timeForLevel = 60; 
