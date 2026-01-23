@@ -55,16 +55,20 @@ class Game {
           spriteImage: sprite
         });
         
+        // // حدّث الكاميرا بناءً على حجم الـ maze
+        // this.camera.width = this.maze[0].length * this.TILE_SIZE;
+        // this.camera.height = this.maze.length * this.TILE_SIZE;
+        
         this.startGameLoop();
       };
       sprite.src = 'assets/sprites/player/player.png';
       
       this.updateUI();
       
-      let timeForLevel = 42; 
-      if (num === 1) timeForLevel = 42;
-      if (num === 2) timeForLevel = 30;
-      if (num === 3) timeForLevel = 20;
+      let timeForLevel = 60; 
+      if (num === 1) timeForLevel = 90;
+      if (num === 2) timeForLevel = 120;
+      if (num === 3) timeForLevel = 180;
       
       this.timer.startCountdown(timeForLevel, this);
     })

@@ -32,7 +32,10 @@ export default class PlayerSprite {
     }
 
     getVisualPosition() {
-        return { x: this.visualX || 0, y: this.visualY || 0 };
+        if (this.visualX === null) {
+            return { x: this.targetX || 0, y: this.targetY || 0 };
+        }
+        return { x: this.visualX, y: this.visualY };
     }
 
     draw(ctx, position, direction, cellSize, camera) {
