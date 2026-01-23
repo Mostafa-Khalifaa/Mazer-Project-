@@ -60,8 +60,13 @@ class Game {
       sprite.src = 'assets/sprites/player/player.png';
       
       this.updateUI();
-      this.timer.reset();
-      this.timer.start();
+      
+      let timeForLevel = 42; 
+      if (num === 1) timeForLevel = 42;
+      if (num === 2) timeForLevel = 30;
+      if (num === 3) timeForLevel = 20;
+      
+      this.timer.startCountdown(timeForLevel, this);
     })
   }
 
@@ -141,7 +146,7 @@ class Game {
     HUD.updateHearts(hearts);
     HUD.updateKeys(this.keys);
     HUD.updateLevel(this.lvl);
-    HUD.updateTimer(this.timer.seconds);
+    HUD.updateTimer(this.timer.timeLeft);
   }
 
   startGameLoop() {
@@ -254,6 +259,15 @@ window.onQuit = () => {
 };
 
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && game.running) {
+    if (game.paused) {
+      window.onResume();
+    } else {
+      window.onPause();
+    }
+    return;
+  }
+  
   if (!game.running || game.paused) return;
   
   const keys = {
