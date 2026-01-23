@@ -1,0 +1,38 @@
+.win-screen, .lose-screen {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  gap: 2rem;
+}
+
+.win-screen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("../../assets/images/frames/victory-screen.png");   
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100vh; 
+  z-index: 0;
+}
+
+.lose-screen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("../../assets/images/frames/game-over-screen.png");   
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100vh; 
+  z-index: 0;
+}
+
+.win-screen > *:not(.win-screen-container),
+.lose-screen > *:not(.lose-screen-container) {
+  position: relative;
+  z-index: 1;
+}

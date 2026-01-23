@@ -17,7 +17,9 @@ document.getElementById("toggle-music").addEventListener("change", (e) => {
 document.querySelectorAll(".menu-btn").forEach((btn) => {
   btn.addEventListener("click", playBtnSound);
 });
-document.getElementById("btn-new-game").addEventListener("click", () => {
+
+
+export function gateModal() {
   document.querySelector(".gate-modal").classList.add("closing");
 
   setTimeout(() => {
@@ -31,6 +33,11 @@ document.getElementById("btn-new-game").addEventListener("click", () => {
   setTimeout(() => {
     document.querySelector(".gate-modal").classList.add("opening");
   }, 1800);
+}
+
+
+document.getElementById("btn-new-game").addEventListener("click", () => {
+  gateModal();
 });
 document.getElementById("btn-load-game").addEventListener("click", () => {
     refreshSlots();
@@ -39,6 +46,13 @@ document.getElementById("btn-load-game").addEventListener("click", () => {
 document.getElementById("btn-settings").addEventListener("click", () => showScreen("settings"));
 document.getElementById("btn-back").addEventListener("click", () => showScreen("home"));
 document.getElementById("btn-settings-back").addEventListener("click", () => showScreen("home"));
+
+// Win/Lose screen buttons
+document.getElementById("btn-win-home").addEventListener("click", () => showScreen("home"));
+document.getElementById("btn-win-new-game").addEventListener("click", () => gateModal());
+document.getElementById("btn-lose-home").addEventListener("click", () => showScreen("home"));
+document.getElementById("btn-lose-new-game").addEventListener("click", () => gateModal());
+
 function showScreen(screenClass) {
 
   document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));

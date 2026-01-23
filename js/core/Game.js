@@ -5,6 +5,7 @@ import { createPlayer } from '../player/PlayerController.js';
 import HUD from './HUD.js';
 import Timer from './Timer.js';
 import Camera from './Camera.js';
+import { gateModal } from '../navigation.js';
 
 class Game {
   constructor() {
@@ -72,9 +73,6 @@ class Game {
           spriteImage: sprite
         });
         
-        // // حدّث الكاميرا بناءً على حجم الـ maze
-        // this.camera.width = this.maze[0].length * this.TILE_SIZE;
-        // this.camera.height = this.maze.length * this.TILE_SIZE;
         
         this.startGameLoop();
       };
