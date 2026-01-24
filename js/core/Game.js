@@ -133,8 +133,6 @@ class Game {
       this.keys++;
       this.maze[y][x] = 0; 
     }
-    //console.log(this.keys)
-    //console.log(this.maze[this.maze.length - 1].length-1 , this.maze.length - 1)
     if(this.keys === 3){
       this.maze[this.maze.length - 1][this.maze[this.maze.length - 1].length - 1] = 6;
     }

@@ -13,6 +13,7 @@ let door = images.door;
 let key = images.key;
 let gem = images.gem;
 let openDoor = images.openDoor;
+let trap = images.trap;
 let KeyspriteWidth = 125;   // ← Exact: 500 ÷ 4 = 125
 let KeyspriteHeight = 500;  // ← Exact: full height
 let GemspriteWidth = 169.25;  // ← Exact: 677 ÷ 4 = 169.25
@@ -46,7 +47,7 @@ function animateKeys(camera = { x: 0, y: 0 }) {
 
 
 // canvas width 1180 height 500
-function loadLevelMaze(level) {
+function loadLevelMaze(level,camera = {x:0 , y:0}) {
     let maze = mazesArr[level - 1];
     return loadAllImages().then(() => {
         //console.log("All images loaded!");
@@ -56,56 +57,52 @@ function loadLevelMaze(level) {
 
 function drawMaze(maze, camera = { x: 0, y: 0 }) {
     currentCamera = camera;
-    //console.log(maze.length, maze[0].length);
     keyPositions = [];
     gemPositions = [];
     for (let i = 0; i < maze.length; i++) {
         for (let j = 0; j < maze[i].length; j++) { // i for row(y) ,j for column(x)
             if (maze[i][j] === 0) {
                 //console.log(i,j);
-                drawPath(j, i);
+                //drawPath(j, i);
+                drawElement(j,i,path);
             } else if (maze[i][j] === 1) {
                 //console.log(i, j);
-                drawWall(j, i);
+                //drawWall(j, i);
+                drawElement(j,i,wall);
             } else if (maze[i][j] === 5) {
-                drawDoor(j, i);
+                //drawDoor(j, i);
+                drawElement(j,i,door);
             } else if (maze[i][j] === 3) {
-                drawPath(j, i);
+                //drawPath(j, i);
+                drawElement(j,i,path);
                 keyPositions.push({ x: j, y: i });
             } else if (maze[i][j] === 2) {
-                drawPath(j, i);
+                //drawPath(j, i);
+                drawElement(j,i,path);
                 gemPositions.push({ x: j, y: i });
             }else if(maze[i][j] === 6){
-                openClosedDoor(j,i);
+                drawElement(j,i,openDoor);
+                //openClosedDoor(j,i);
+            }else if(maze[i][j] === 4){
+                //drawTrap(j,i);
+                drawElement(j,i,trap);
             }
         }
     }
 }
 
-
-function drawPath(x, y) {
-    ctx.drawImage(path, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
-}
-function drawWall(x, y) {
-    ctx.drawImage(wall, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
+function drawElement(x,y,image){
+    ctx.drawImage(image, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
 }
 
-function drawDoor(x, y) {
-    ctx.drawImage(door, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
-}
-
-function openClosedDoor(x,y){
-    ctx.drawImage(openDoor, x * TILE_SIZE - currentCamera.x, y * TILE_SIZE - currentCamera.y, TILE_SIZE, TILE_SIZE);
-}
-
-function isWall(row, col, level) {
+function isWall(row, col, level) { //checke the dimensions given is wall or not
     if (!isInsideMaze(row, col, level)) {
         return false;
     }
     let maze = mazesArr[level - 1];
     return maze[row][col] === 1;
 }
-function isInsideMaze(row, col, level) {
+function isInsideMaze(row, col, level) { //check if the dimensions given outside the bounds of the array
     let maze = mazesArr[level - 1];
     if (row > maze.length - 1 || col > maze[0].length - 1) {
         //console.log("Outside");
@@ -113,38 +110,36 @@ function isInsideMaze(row, col, level) {
     }
     return true;
 }
-function getStartPosition() {
+function getStartPosition() { //return the start position of the player
     return {
         row: 0,
         col: 0
     }
 }
-function getEndPosition() {
+function getEndPosition() { // return the end position of the player
     let maze = mazesArr[level - 1];
     return {
         row: maze.length - 1,
         col: maze[maze.length - 1].length - 1
     }
 }
-function hasTrap(row, col, level) {
+function hasTrap(row, col, level) { //return if the dimension given is a trap or not
     let maze = mazesArr[level - 1];
     return maze[row][col] === 4;
 }
 
-function hasLife(row, col, level) {
+function hasLife(row, col, level) { // return if the dimension given is gem or not
     let maze = mazesArr[level - 1];
     return maze[row][col] === 2;
 }
-function getLifePositions() {
+function getLifePositions() {  // return gem position of the current maze
     return [...gemPositions];
 }
-function getTrapPositions() {
+function getTrapPositions() { // return trap positions
     return [...trapPositions];
 }
-function removeLifeFromMaze(row, col) {
+function removeElementfromMaze(row, col) { // remove life from maze and draw tile above it
     drawPath(col, row);
 }
-//loadLevelMaze(1);
-// Auto-load removed - Game.js calls when ready
 
-export { loadLevelMaze, drawMaze, animateKeys ,openClosedDoor};
+export { loadLevelMaze, drawMaze, animateKeys};
