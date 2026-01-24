@@ -1,4 +1,4 @@
-import { StorageSystem } from './storage/storage.js';
+import { StorageSystem } from "./storage/storage.js";
 
 document.body.addEventListener(
   "click",
@@ -18,44 +18,64 @@ document.querySelectorAll(".menu-btn").forEach((btn) => {
   btn.addEventListener("click", playBtnSound);
 });
 
-
-export function gateModal() {
+export function gateModal(onMiddle) {
   document.querySelector(".gate-modal").classList.add("closing");
 
   setTimeout(() => {
-    showScreen("game");
+    if (onMiddle) onMiddle();
     document.querySelector(".gate-modal").classList.remove("closing");
-
-    if (window.game) {
-      window.game.startGame();
-    }
-  }, 3600);
-  setTimeout(() => {
     document.querySelector(".gate-modal").classList.add("opening");
-  }, 1800);
+  }, 2500);
+
+  setTimeout(() => {
+    document.querySelector(".gate-modal").classList.remove("opening");
+  }, 1500);
 }
 
-
 document.getElementById("btn-new-game").addEventListener("click", () => {
-  gateModal();
+  gateModal(() => {
+    showScreen("game");
+    if (window.game) window.game.start();
+  });
 });
 document.getElementById("btn-load-game").addEventListener("click", () => {
-    refreshSlots();
-    showScreen("load-game");
-  });
-document.getElementById("btn-settings").addEventListener("click", () => showScreen("settings"));
-document.getElementById("btn-back").addEventListener("click", () => showScreen("home"));
-document.getElementById("btn-settings-back").addEventListener("click", () => showScreen("home"));
+  refreshSlots();
+  showScreen("load-game");
+});
+document
+  .getElementById("btn-settings")
+  .addEventListener("click", () => showScreen("settings"));
+document
+  .getElementById("btn-back")
+  .addEventListener("click", () => showScreen("home"));
+document
+  .getElementById("btn-settings-back")
+  .addEventListener("click", () => showScreen("home"));
 
 // Win/Lose screen buttons
-document.getElementById("btn-win-home").addEventListener("click", () => showScreen("home"));
-document.getElementById("btn-win-new-game").addEventListener("click", () => gateModal());
-document.getElementById("btn-lose-home").addEventListener("click", () => showScreen("home"));
-document.getElementById("btn-lose-new-game").addEventListener("click", () => gateModal());
+document
+  .getElementById("btn-win-home")
+  .addEventListener("click", () => showScreen("home"));
+document.getElementById("btn-win-new-game").addEventListener("click", () =>
+  gateModal(() => {
+    showScreen("game");
+    if (window.game) window.game.start();
+  }),
+);
+document
+  .getElementById("btn-lose-home")
+  .addEventListener("click", () => showScreen("home"));
+document.getElementById("btn-lose-new-game").addEventListener("click", () =>
+  gateModal(() => {
+    showScreen("game");
+    if (window.game) window.game.start();
+  }),
+);
 
-function showScreen(screenClass) {
-
-  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+export function showScreen(screenClass) {
+  document
+    .querySelectorAll(".screen")
+    .forEach((s) => s.classList.remove("active"));
   document.querySelector(`.screen.${screenClass}`)?.classList.add("active");
 }
 
@@ -80,36 +100,38 @@ function refreshSlots() {
   for (let i = 0; i < slots.length; i++) {
     let slot = slots[i];
     let slotNumber = slot.slotNumber;
-    
-    let row = document.querySelector('.save-row[data-slot="' + slotNumber + '"]');
+
+    let row = document.querySelector(
+      '.save-row[data-slot="' + slotNumber + '"]',
+    );
     if (!row) continue;
-    
-    let levelCell = row.querySelector('.slot-level');
-    let scoreCell = row.querySelector('.slot-score');
-    let dateCell = row.querySelector('.slot-date');
-    let loadButton = row.querySelector('.btn-load');
-    let deleteButton = row.querySelector('.btn-delete');
-    
+
+    let levelCell = row.querySelector(".slot-level");
+    let scoreCell = row.querySelector(".slot-score");
+    let dateCell = row.querySelector(".slot-date");
+    let loadButton = row.querySelector(".btn-load");
+    let deleteButton = row.querySelector(".btn-delete");
+
     if (slot.isEmpty) {
-      levelCell.textContent = '-';
-      scoreCell.textContent = '-';
-      dateCell.textContent = 'Empty';
+      levelCell.textContent = "-";
+      scoreCell.textContent = "-";
+      dateCell.textContent = "Empty";
       loadButton.disabled = true;
       deleteButton.disabled = true;
     } else {
-      levelCell.textContent = 'Level ' + slot.data.level;
+      levelCell.textContent = "Level " + slot.data.level;
       scoreCell.textContent = slot.data.keys || 0;
       dateCell.textContent = new Date(slot.data.date).toLocaleDateString();
       loadButton.disabled = false;
       deleteButton.disabled = false;
-      
-      loadButton.onclick = function() {
+
+      loadButton.onclick = function () {
         if (window.game) {
           window.game.load(slotNumber);
-          showScreen('game');
+          showScreen("game");
         }
       };
-            deleteButton.onclick = function() {
+      deleteButton.onclick = function () {
         StorageSystem.deleteSlot(slotNumber);
         refreshSlots();
       };
