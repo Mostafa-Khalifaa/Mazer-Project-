@@ -81,6 +81,7 @@ dialog .menu-btn {
   min-width: 45rem;
   color: white;
   font-weight: bold;
+  font-family: var(--font-body);
   padding: 2rem 2.5rem;
 }
 #rules .main-title {
