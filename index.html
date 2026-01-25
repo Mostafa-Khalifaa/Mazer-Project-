@@ -18,16 +18,15 @@
       </menu>
     </dialog>
     <dialog id="confirmation-modal">
-      <h2 class="modal-title">Modal Title</h2>
-      <p class="modal-message">Are you sure you want to do this?</p>
+      <h2 class="modal-title">Confirmation</h2>
+      <p class="modal-message">Are you sure you want to delete this save?</p>
       <menu class="buttons">
-        <button onClick="yes()" class="menu-btn">Yes</button>
-        <button onClick="no()" class="menu-btn">No</button>
+        <button id="confirmation-modal-yes" class="menu-btn">Yes</button>
+        <button id="confirmation-modal-no" class="menu-btn">No</button>
       </menu>
     </dialog>
     <dialog id="rules" class="modal">
       <h2 class="main-title">𓂀 rules 𓂀</h2>
-      <!-- <h3>Tomb of the Forgotten Pharaoh</h3> -->
       <p>
         Welcome, Explorer! You have entered the ancient burial chambers of a
         lost king. The air is heavy, the walls are shifting, and you aren’t
@@ -48,6 +47,7 @@
             <li>Down Arrow (↓): Move Backward / South</li>
             <li>Left Arrow (←): Turn Left / West</li>
             <li>Right Arrow (→): Turn Right / East</li>
+            <li>Escape (Esc): Pause Game</li>
           </ol>
         </div>
         <button id="btn-rules-close" class="menu-btn">OK</button>

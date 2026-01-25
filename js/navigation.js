@@ -208,10 +208,21 @@ function refreshSlots() {
       };
 
       deleteButton.onclick = function () {
-        if (confirm("Are you sure you want to delete this save?")) {
+        const modal = document.getElementById("confirmation-modal");
+        const yesBtn = document.getElementById("confirmation-modal-yes");
+        const noBtn = document.getElementById("confirmation-modal-no");
+
+        yesBtn.onclick = function () {
           StorageSystem.deleteSlot(slotNumber);
           refreshSlots();
-        }
+          modal.close();
+        };
+
+        noBtn.onclick = function () {
+          modal.close();
+        };
+
+        modal.showModal();
       };
     }
   }

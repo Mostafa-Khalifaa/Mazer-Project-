@@ -1,10 +1,9 @@
-
 export const CONFIG = {
   TILE_SIZE: 120,
   LEVEL_TIMES: {
-    1: 90,
-    2: 120,
-    3: 180,
+    1: 120,
+    2: 180,
+    3: 240,
   },
   PLAYER: {
     ANIMATION_SPEED: 25,
